@@ -7,7 +7,7 @@ class ContactsTest extends ApiTester {
     public function it_fetches_contacts()
     {
         //arrange
-        $this->times(3)->make('contact');
+        $this->times(3)->make('Contact');
         //act
         $this->getJson('api/v1/contacts');
         //assert
@@ -22,7 +22,7 @@ class ContactsTest extends ApiTester {
     /** @test */
     public function it_fetches_a_single_contact()
     {
-        $this->make('contact');
+        $this->make('Contact');
         $lesson = $this->getJson('api/v1/contacts/1')->data;
         $this->assertResponseOk();
         //$this->assertObjectHasAttributes($lesson,'body','active');
