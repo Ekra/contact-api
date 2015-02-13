@@ -1,5 +1,6 @@
 <?php
 use Dingo\Api\Routing\ControllerTrait;
+
 class ContactsController extends \BaseController {
 
     use ControllerTrait;
@@ -12,18 +13,13 @@ class ContactsController extends \BaseController {
 	public function index()
 	{
 
-
          $contacts = Contact::all();
+
          return Response::json(array(
-             'error' => false,
+             //'error' => false,
              'contacts' => $contacts->toArray()),
              200
          );
-
-
-
-
-
 
 	}
 
@@ -47,19 +43,35 @@ class ContactsController extends \BaseController {
 	 */
 	public function store()
 	{
-        $contact = new Contact;
-        $contact->first_name = Input::get('first_name');
-        $contact->last_name = Input::get('last_name');
-        $contact->email = Input::get('email');
-        $contact->address = Input::get('address');
-        $contact->twitter = Input::get('twitter');
+
+        $rules = [
+            'first_name'     => 'required',
+            'last_name'      => 'required',
+            'email'          => 'required|email|unique:contacts',
+            'address'        => 'required'
+        ];
+
+        $input = Input::all();
+        $validator = Validator::make($input, $rules);
+        if($validator->fails())
+        {
+            //throw new Dingo\Api\Exception\StoreResourceFailedException('Could not create new contact.', $validator->errors());
+            return Response::json(array(
+                // 'error' => false,
+                'message' => 'validation failed'
+            ),422);
+        }
+
+        $contact = Contact::newContact(Input::get('first_name'),Input::get('last_name'),
+            Input::get('email'),Input::get('address'),Input::get('twitter'));
+
         $contact->save();
 
 
         return Response::json(array(
-            'errror' => false,
-            'contacts' => $contact->toArray()
-        ),200);
+           // 'error' => false,
+            'contacts' => 'contacts stored'
+        ),201);
 
 
 	}
@@ -75,12 +87,22 @@ class ContactsController extends \BaseController {
 	{
         //return "hapa";
 
-        $contacts = Contact::where('id', $id)->get();
+       // $contacts = Contact::where('id', $id)->get();
+       $contacts = Contact::find($id);
 
-        return Response::json(array(
-            'error' => false,
-            'contacts' => $contacts->toArray()
-        ), 200);
+        if( !$contacts ){
+            return Response::json(array(
+                //'error' => false,
+                'message' => 'Single contact does not exist'
+            ), 404);
+        }else{
+            return Response::json(array(
+                //'error' => false,
+                'contacts' => $contacts->toArray()
+            ), 200);
+
+
+        }
 	}
 
 
@@ -108,7 +130,7 @@ class ContactsController extends \BaseController {
 	{
        $contact = contact::find($id);
 
-        {
+        if(!$contact) {
             return $this->response->errorNotFound('Contact does not exist!.');
         }
 
@@ -119,6 +141,11 @@ class ContactsController extends \BaseController {
         $contact->address = Input::get('address');
         $contact->twitter = Input::get('twitter');
         $contact->save();
+
+        return Response::json(array(
+            //'error' => false,
+            'contacts' =>'contact updated'
+        ), 200);
 
     }
 
@@ -136,7 +163,12 @@ class ContactsController extends \BaseController {
         $contact = contact::find($id);
 
         $contact->forceDelete();
-        return $this->response->noContent();
+        //return $this->response->noContent();
+
+        return Response::json(array(
+            //'error' => false,
+            'contacts' => 'contacts deleted'
+        ), 200);
 	}
 
     public function restore($id)
@@ -144,7 +176,12 @@ class ContactsController extends \BaseController {
 
         $contact = contact::withTrashed()->find($id);
         $contact->restore($id);
-        return $this->response->noContent();
+       // return $this->response->noContent();
+
+        return Response::json(array(
+            //'error' => false,
+            'contacts' => 'contacts restored'
+        ), 200);
 
     }
 
@@ -152,7 +189,12 @@ class ContactsController extends \BaseController {
     {
         $contact = contact::find($id);
         contact::destroy($id);
-        return $this->response->noContent();
+        //return $this->response->noContent();
+
+        return Response::json(array(
+            //'error' => false,
+            'contacts' => 'contacts archived'
+        ), 200);
     }
 
 

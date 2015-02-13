@@ -15,10 +15,14 @@ class Contact extends Eloquent{
     protected $table = 'contacts';
 
 
-
     public $timestamps = false;
 
     protected $fillable = ['first_name','last_name','email','address','twitter'];
+
+    public static  function  newContact($first_name,$last_name,$email,$address,$twitter)
+    {
+        return new static(compact($first_name,$last_name,$email,$address,$twitter));
+    }
 
     public function user()
     {

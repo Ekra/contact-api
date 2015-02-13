@@ -21,9 +21,10 @@ class CreateContactsTable extends Migration {
             $table->string('twitter');
             $table->timestamps();
             $table->softDeletes();
+
             // Foreign Key user_id here
             $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+           $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
 
         }

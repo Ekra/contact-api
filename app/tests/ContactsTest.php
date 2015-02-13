@@ -16,21 +16,23 @@ class ContactsTest extends ApiTester {
     /** @test */
     public function it_404s_if_a_contact_not_found()
     {
-        $this->getJson('api/v1/contacts/x');
+       $this->getJson('api/v1/contacts/x');
         $this->assertResponseStatus(404);
+
+        //$this->assertObjectHasAttributes();
     }
     /** @test */
     public function it_fetches_a_single_contact()
     {
         $this->make('Contact');
-        $lesson = $this->getJson('api/v1/contacts/1')->data;
+        $contact = $this->getJson('api/v1/contacts/1');
         $this->assertResponseOk();
         //$this->assertObjectHasAttributes($lesson,'body','active');
     }
     /** @test */
     public function it_creates_a_new_contact_given_valid_parameters()
     {
-        $this->getJson('api/v1/contacts','POST', $this->getStub());
+        $this->getJson('api/v1/contacts', 'POST', $this->getStub());
         $this->assertResponseStatus(201);
     }
     /** @test */

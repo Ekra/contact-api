@@ -12,11 +12,11 @@
 */
 
 
-Route::group(array('prefix' => 'api/v1'), function()
+Route::group(array('prefix' => 'api/v1', 'version' => 'v1'), function()
 {
     Route::resource('contacts', 'ContactsController');
     Route::delete('contacts/{id}/restore', 'ContactsController@restore');
     Route::put('contacts/{id}/archive', 'ContactsController@archive');
 
 });
-  //  Route::resource('contacts', 'ContactsController');
+  // Route::resource('contacts', 'ContactsController');
